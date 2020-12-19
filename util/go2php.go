@@ -16,16 +16,8 @@ const (
 
 var deep = 0
 
-func tab() (str string) {
-	str = ""
-	for i := 0; i < deep; i++ {
-		str += "   "
-	}
-	return
-
-}
-
-func StructTOPhpArray(v interface{}) string {
+// GoTypeToPHPCode 将Go简单数据类型转换为PHP数组
+func GoTypeToPHPCode(v interface{}) string {
 	t := reflect.TypeOf(v)
 	value := reflect.ValueOf(v)
 	switch t.Kind() {
@@ -42,6 +34,14 @@ func StructTOPhpArray(v interface{}) string {
 	}
 }
 
+func tab() (str string) {
+	str = ""
+	for i := 0; i < deep; i++ {
+		str += "\t"
+	}
+	return
+}
+
 func isMap(v reflect.Value) string {
 	deep++
 	str := arrayPrefix + "\n"
@@ -55,7 +55,7 @@ func isMap(v reflect.Value) string {
 		key := reflect.ValueOf(k)
 		value := v.MapIndex(key)
 		str += fmt.Sprintf("%s%v %s %v%s\n",
-			tab(), StructTOPhpArray(key.Interface()), arrayLink, StructTOPhpArray(value.Interface()), arrayEnding)
+			tab(), GoTypeToPHPCode(key.Interface()), arrayLink, GoTypeToPHPCode(value.Interface()), arrayEnding)
 	}
 	deep--
 	str += tab() + arraySuffix
@@ -67,7 +67,7 @@ func isSlice(v reflect.Value) string {
 	str := arrayPrefix + "\n"
 	for i := 0; i < v.Len(); i++ {
 		str += fmt.Sprintf("%s%v%s\n",
-			tab(), StructTOPhpArray(v.Index(i).Interface()), arrayEnding)
+			tab(), GoTypeToPHPCode(v.Index(i).Interface()), arrayEnding)
 	}
 	deep--
 	str += tab() + arraySuffix
@@ -80,7 +80,7 @@ func isStruct(t reflect.Type, v reflect.Value) string {
 	for i := 0; i < v.NumField(); i++ {
 		key := t.Field(i).Tag.Get("php")
 		str += fmt.Sprintf("%s'%s' %s %v%s\n",
-			tab(), key, arrayLink, StructTOPhpArray(v.Field(i).Interface()), arrayEnding)
+			tab(), key, arrayLink, GoTypeToPHPCode(v.Field(i).Interface()), arrayEnding)
 	}
 	deep--
 	str += tab() + arraySuffix

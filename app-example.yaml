@@ -1,0 +1,22 @@
+client:
+  pollOrWatch: watch
+  allInOne: true
+  ip: 127.0.0.1
+  logExpire: 72h
+  beatFreq: 2s #该配置值不支持热更新
+
+server:
+  address: http://your-apollo.config-service.address
+  cluster: default
+
+apps:
+  - appId: demo_apollo_agent
+    secret: a93ab23b59044e10b9bce61c4629e666
+    namespace:
+      - application.properties
+      - redis.properties
+      - mysql.properties
+    pollInterval: 2s
+    inOne:
+      filename: ./demo.env
+      syntax: env
