@@ -40,6 +40,9 @@ func (l *LogLauncher) Init(agent *Agent) error {
 }
 
 func (l *LogLauncher) Run() error {
+	if l.agent.EnvProfile {
+		return nil
+	}
 	if l.booted {
 		return nil
 	}
@@ -49,7 +52,9 @@ func (l *LogLauncher) Run() error {
 }
 
 func (l *LogLauncher) Shutdown() {
-	l.stopLog <- true
+	if l.agent.EnvProfile {
+		l.stopLog <- true
+	}
 	close(l.stopLog)
 	l.booted = false
 	log.Println("[INFO] LogLauncher stopped")

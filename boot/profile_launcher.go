@@ -55,13 +55,9 @@ type App struct {
 	AppId        string        `yaml:"appId"`
 	Namespaces   []string      `yaml:"namespace"`
 	Secret       string        `yaml:"secret"`
+	Syntax       string        `yaml:"syntax"`
 	PollInterval time.Duration `yaml:"pollInterval"`
-	InOne        *InOne        `yaml:"inOne"`
-}
-
-type InOne struct {
-	FileName string `yaml:"filename"`
-	Syntax   string `yaml:"syntax"`
+	InOneFile    string        `yaml:"inOneFile"`
 }
 
 func NewProfile() *ProfileLauncher {
@@ -128,25 +124,23 @@ func (p *ProfileLauncher) Parse() error {
 }
 
 func (p *ProfileLauncher) loadEnvVar() error {
-	p.Profile.Client.Type = util.Str("APOLLO_AGENT_CLIENT_TYPE", "")
+	p.Profile.Client.Type = util.Str("APOLLO_AGENT_CLIENT_TYPE", _defaultClientType)
 	p.Profile.Client.AllInOne = util.Bool("APOLLO_AGENT_CLIENT_ALLINONE", true)
 	p.Profile.Client.LogExpire = util.Dur("APOLLO_AGENT_CLIENT_LOGEXPIRE", 0)
 	p.Profile.Client.Ip = util.Str("APOLLO_AGENT_CLIENT_IP", "")
 	p.Profile.Client.BeatFreQ = util.Dur("APOLLO_AGENT_CLIENT_BEATFREQ", 0)
 
-	p.Profile.Server.Cluster = strings.ToLower(util.Str("APOLLO_AGENT_SERVER_CLUSTER", ""))
 	p.Profile.Server.Address = util.Str("APOLLO_AGENT_SERVER_ADDRESS", "")
+	p.Profile.Server.Cluster = strings.ToLower(util.Str("APOLLO_AGENT_SERVER_CLUSTER", ""))
 
 	p.Profile.Apps = []*App{
 		{
-			AppId:      util.Str("APOLLO_AGENT_APP_ID", ""),
-			Namespaces: strings.Split(util.Str("APOLLO_AGENT_APP_NAMESPACES", ""), ","),
-			Secret:     util.Str("APOLLO_AGENT_APP_SECRET", ""),
-			InOne: &InOne{
-				FileName: util.Str("APOLLO_AGENT_APP_CONFIG_NAME", ""),
-				Syntax:   util.Str("APOLLO_AGENT_APP_CONFIG_SYNTAX", ""),
-			},
+			AppId:        util.Str("APOLLO_AGENT_APP_ID", ""),
+			Namespaces:   strings.Split(util.Str("APOLLO_AGENT_APP_NAMESPACES", ""), ","),
+			Secret:       util.Str("APOLLO_AGENT_APP_SECRET", ""),
+			Syntax:       util.Str("APOLLO_AGENT_APP_SYNTAX", ""),
 			PollInterval: util.Dur("APOLLO_AGENT_APP_POLL_INTERVAL", 0),
+			InOneFile:    util.Str("APOLLO_AGENT_APP_IN_ONE_FILE", ""),
 		},
 	}
 	if util.Str("APOLLO_AGENT_APP_ID", "") == "" {
@@ -231,18 +225,11 @@ func (p *Profile) wrapper() {
 			if app.PollInterval == 0 {
 				app.PollInterval = _defaultAppPollInterval
 			}
-			if app.InOne == nil {
-				app.InOne = &InOne{
-					FileName: "." + string(os.PathSeparator) + _defaultAppNamespace,
-					Syntax:   _defaultAppSyntax,
-				}
-			} else {
-				if app.InOne.Syntax == "" {
-					app.InOne.Syntax = _defaultAppSyntax
-				}
-				if app.InOne.FileName == "" {
-					app.InOne.FileName = "." + string(os.PathSeparator) + _defaultAppNamespace
-				}
+			if app.Syntax == "" {
+				app.Syntax = _defaultAppSyntax
+			}
+			if app.InOneFile == "" {
+				app.InOneFile = "." + string(os.PathSeparator) + _defaultAppNamespace
 			}
 		}
 	} else {
@@ -250,10 +237,8 @@ func (p *Profile) wrapper() {
 			{
 				Namespaces:   []string{_defaultAppNamespace},
 				PollInterval: _defaultAppPollInterval,
-				InOne: &InOne{
-					FileName: "." + string(os.PathSeparator) + _defaultAppNamespace,
-					Syntax:   _defaultAppSyntax,
-				},
+				Syntax:       _defaultAppSyntax,
+				InOneFile:    "." + string(os.PathSeparator) + _defaultAppNamespace,
 			},
 		}
 	}

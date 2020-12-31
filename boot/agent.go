@@ -4,6 +4,8 @@ import (
 	"context"
 	"github.com/2345tech/apollo-agent/common"
 	"log"
+	"net/http"
+	_ "net/http/pprof"
 	"os"
 	"sync"
 	"time"
@@ -75,6 +77,12 @@ func New(lfs ...LauncherFunc) *Agent {
 		},
 	}
 	args.Init(agent)
+
+	if *args.Pprof {
+		go func() {
+			_ = http.ListenAndServe("127.0.0.1:18081", nil)
+		}()
+	}
 
 	return agent
 }
@@ -220,8 +228,8 @@ func (a *Agent) fillHandlerParam() *common.HandlerParam {
 			Namespaces:   app.Namespaces,
 			Secret:       app.Secret,
 			PollInterval: app.PollInterval,
-			FileName:     app.InOne.FileName,
-			Syntax:       app.InOne.Syntax,
+			FileName:     app.InOneFile,
+			Syntax:       app.Syntax,
 		})
 	}
 	return param

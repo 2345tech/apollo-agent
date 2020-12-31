@@ -4,15 +4,9 @@ import (
 	"github.com/2345tech/apollo-agent/apollo"
 	"github.com/2345tech/apollo-agent/boot"
 	"log"
-	"net/http"
-	_ "net/http/pprof"
 )
 
 func main() {
-	go func() {
-		http.ListenAndServe(":8080", nil)
-	}()
-
 	agent := boot.New(
 		boot.WithLauncher(boot.NewLog()),
 		boot.WithLauncher(boot.NewProfile()),

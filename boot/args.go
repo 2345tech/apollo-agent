@@ -8,12 +8,14 @@ import (
 const (
 	_defaultLogfile    = "./logs/agent.log"
 	_defaultConfigFile = "./conf/app.yaml"
+	_defaultPprof      = false
 )
 
 type Args struct {
 	agent      *Agent
 	LogFile    *string
 	ConfigFile *string
+	Pprof      *bool
 }
 
 func NewArg() *Args {
@@ -27,9 +29,10 @@ func (a *Args) Init(agent *Agent) {
 		stdOut := "/dev/stdout"
 		a.LogFile = &stdOut
 	} else {
-		a.LogFile = flag.String("log", _defaultLogfile, "the log file name with absolute path")
+		a.LogFile = flag.String("l", _defaultLogfile, "log string: the log file name with absolute path")
 	}
-	a.ConfigFile = flag.String("config", _defaultConfigFile, "the config file name with absolute path")
+	a.ConfigFile = flag.String("c", _defaultConfigFile, "config string: the config file name with absolute path")
+	a.Pprof = flag.Bool("p", _defaultPprof, "pprof bool: open pprof for debug, default http port is 18081")
 	_ = flag.Set("version", VERSION)
 	_ = flag.Set("author", AUTHOR)
 
