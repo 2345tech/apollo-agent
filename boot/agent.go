@@ -90,8 +90,7 @@ func New(lfs ...LauncherFunc) *Agent {
 func (a *Agent) Init() *Agent {
 	for _, p := range a.LFunc {
 		if err := p(a); err != nil {
-			log.Println(err.Error())
-			panic("[PANIC] agent SetUp failed")
+			panic("[PANIC] agent SetUp failed. error:" + err.Error())
 		}
 	}
 	return a

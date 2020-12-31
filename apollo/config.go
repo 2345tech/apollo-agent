@@ -169,7 +169,7 @@ func writeConfigOneByOne(meta *MetaConfig, worker Worker) {
 	for ns, data := range getSyncMapData(worker.GetData()) {
 		oldFile := filepath.Dir(meta.FileName) + string(os.PathSeparator) + ns
 		tmpFile := oldFile + TmpFileSuffix
-		if err := util.SingleNSInOneFile(tmpFile, meta.Syntax, data); err != nil {
+		if err := util.SingleNSInOneFile(tmpFile, util.NSSyntax(ns), data); err != nil {
 			log.Printf("[WARN] [appId] %v [Namespace] %v WriteData error : %v \n", meta.AppId, ns, err.Error())
 			continue
 		}

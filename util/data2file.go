@@ -7,6 +7,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"path"
 	"sort"
 	"strings"
 	"sync"
@@ -25,6 +26,19 @@ const (
 const (
 	FilePerm = 0644
 )
+
+func NSSyntax(namespace string) string {
+	syntax := path.Ext(namespace)
+	if syntax != "" {
+		syntax = strings.Trim(syntax, ".")
+	}
+	switch strings.ToLower(syntax) {
+	case F_ENV, F_INI, F_PHP, F_YAML, F_YML, F_XML, F_TXT:
+		return strings.ToLower(syntax)
+	default:
+		return F_ENV
+	}
+}
 
 // SingleNSInOneFile 将单独一个NS配置数据写入一个文件
 func SingleNSInOneFile(fileName, suffix string, data map[string]string) error {
