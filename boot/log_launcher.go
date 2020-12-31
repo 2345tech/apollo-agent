@@ -51,6 +51,9 @@ func (l *LogLauncher) Run() error {
 	return nil
 }
 
+func (l *LogLauncher) Stop() {
+}
+
 func (l *LogLauncher) Shutdown() {
 	if l.agent.EnvProfile {
 		l.stopLog <- true

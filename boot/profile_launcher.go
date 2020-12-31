@@ -99,6 +99,10 @@ func (p *ProfileLauncher) Run() error {
 	return nil
 }
 
+func (p *ProfileLauncher) Stop() {
+	p.Shutdown()
+}
+
 func (p *ProfileLauncher) Shutdown() {
 	_ = p.watcher.Close()
 	p.booted = false

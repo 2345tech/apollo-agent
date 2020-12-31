@@ -37,6 +37,9 @@ func (s *SignalLauncher) Run() error {
 	return nil
 }
 
+func (s *SignalLauncher) Stop() {
+}
+
 func (s *SignalLauncher) Shutdown() {
 	close(s.signal)
 	s.booted = false

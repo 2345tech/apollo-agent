@@ -20,6 +20,7 @@ const (
 type AgentLauncher interface {
 	Init(agent *Agent) error
 	Run() error
+	Stop()
 	Shutdown()
 }
 
@@ -192,6 +193,9 @@ func (a *Agent) Restart() {
 func (a *Agent) Stop() {
 	if !a.isRunning {
 		return
+	}
+	for _, p := range a.Launchers {
+		p.Stop()
 	}
 	a.Cancel()
 	hLen := len(a.Handlers)
