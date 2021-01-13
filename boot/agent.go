@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	VERSION  = "v4.0.0"
+	VERSION  = "v4.0.0-release"
 	AUTHOR   = "lixy<lixy@2345.com>"
 	FilePerm = 0644
 )
