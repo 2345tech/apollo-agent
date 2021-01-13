@@ -5,10 +5,12 @@ import (
 	"github.com/2345tech/apolloclient"
 	"log"
 	"sync"
+	"time"
 )
 
 type Watch struct {
 	allInOne bool
+	interval time.Duration
 	update   chan struct{}
 
 	Meta *MetaConfig
@@ -17,9 +19,10 @@ type Watch struct {
 	client *apolloclient.Client
 }
 
-func NewWatcher(allInOne bool) Worker {
+func NewWatcher(allInOne bool, interval time.Duration) Worker {
 	return &Watch{
 		allInOne: allInOne,
+		interval: interval,
 		update:   make(chan struct{}),
 		Data:     new(sync.Map),
 	}
@@ -98,17 +101,24 @@ func (w *Watch) watching(param apolloclient.GetConfigParam, wg *sync.WaitGroup, 
 		default:
 			log.Printf("[INFO] [appId] %v [Namespace] %v watching...\n", param.AppID, param.Namespace)
 			if update, notifications, err := w.client.GetNotifications(notificationParam); err != nil {
-				log.Println("[ERROR] GetNotifications from Apollo Config Service error:" + err.Error())
-			} else if update && len(notifications) == 1 {
-				notificationParam.Notifications[0].NotificationID = notifications[0].NotificationID
-				if data, err := w.client.GetConfig(&param); err == nil {
-					if len(data.Configs) > 0 {
-						w.Data.Store(param.Namespace, data.Configs)
-						w.update <- struct{}{}
+				log.Printf("[ERROR] [appId] %v [Namespace] %v GetNotifications from Apollo Config Service error:%v\n",
+					param.AppID, param.Namespace,err.Error())
+				time.Sleep(w.interval)
+			} else {
+				if update && len(notifications) == 1 {
+					notificationParam.Notifications[0].NotificationID = notifications[0].NotificationID
+					if data, err := w.client.GetConfig(&param); err == nil {
+						if len(data.Configs) > 0 {
+							w.Data.Store(param.Namespace, data.Configs)
+							w.update <- struct{}{}
+						}
+						param.ReleaseKey = data.ReleaseKey
+					} else {
+						log.Println("[INFO] GetConfig from Apollo Config Service error:" + err.Error())
 					}
-					param.ReleaseKey = data.ReleaseKey
 				} else {
-					log.Println("[INFO] GetConfig from Apollo Config Service error:" + err.Error())
+					log.Printf("[ERROR] [appId] %v [Namespace] %v GetNotifications failed...\n", param.AppID, param.Namespace)
+					time.Sleep(w.interval)
 				}
 			}
 		}

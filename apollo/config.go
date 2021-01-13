@@ -129,7 +129,7 @@ func (a *Apollo) setWorkers(param *common.HandlerParam) {
 func (a *Apollo) newWorker(param *common.HandlerParam, app *common.App) Worker {
 	switch a.runMode {
 	case common.ModeWatch:
-		return NewWatcher(param.AllInOne)
+		return NewWatcher(param.AllInOne, app.PollInterval)
 	default:
 		return NewPoller(param.AllInOne, app.PollInterval)
 	}

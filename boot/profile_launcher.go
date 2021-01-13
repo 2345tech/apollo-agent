@@ -130,21 +130,21 @@ func (p *ProfileLauncher) Parse() error {
 func (p *ProfileLauncher) loadEnvVar() error {
 	p.Profile.Client.Type = util.Str("APOLLO_AGENT_CLIENT_TYPE", _defaultClientType)
 	p.Profile.Client.AllInOne = util.Bool("APOLLO_AGENT_CLIENT_ALLINONE", true)
-	p.Profile.Client.LogExpire = util.Dur("APOLLO_AGENT_CLIENT_LOGEXPIRE", 0)
+	p.Profile.Client.LogExpire = util.Dur("APOLLO_AGENT_CLIENT_LOGEXPIRE", _defaultClientLogExpire)
 	p.Profile.Client.Ip = util.Str("APOLLO_AGENT_CLIENT_IP", "")
-	p.Profile.Client.BeatFreQ = util.Dur("APOLLO_AGENT_CLIENT_BEATFREQ", 0)
+	p.Profile.Client.BeatFreQ = util.Dur("APOLLO_AGENT_CLIENT_BEATFREQ", _defaultAppPollInterval)
 
 	p.Profile.Server.Address = util.Str("APOLLO_AGENT_SERVER_ADDRESS", "")
-	p.Profile.Server.Cluster = strings.ToLower(util.Str("APOLLO_AGENT_SERVER_CLUSTER", ""))
+	p.Profile.Server.Cluster = strings.ToLower(util.Str("APOLLO_AGENT_SERVER_CLUSTER", _defaultServerCluster))
 
 	p.Profile.Apps = []*App{
 		{
 			AppId:        util.Str("APOLLO_AGENT_APP_ID", ""),
 			Namespaces:   strings.Split(util.Str("APOLLO_AGENT_APP_NAMESPACES", ""), ","),
 			Secret:       util.Str("APOLLO_AGENT_APP_SECRET", ""),
-			Syntax:       util.Str("APOLLO_AGENT_APP_SYNTAX", ""),
-			PollInterval: util.Dur("APOLLO_AGENT_APP_POLL_INTERVAL", 0),
-			InOneFile:    util.Str("APOLLO_AGENT_APP_IN_ONE_FILE", ""),
+			Syntax:       util.Str("APOLLO_AGENT_APP_SYNTAX", _defaultAppSyntax),
+			PollInterval: util.Dur("APOLLO_AGENT_APP_POLL_INTERVAL", _defaultAppPollInterval),
+			InOneFile:    util.Str("APOLLO_AGENT_APP_IN_ONE_FILE", _defaultAppNamespace),
 		},
 	}
 	if util.Str("APOLLO_AGENT_APP_ID", "") == "" {

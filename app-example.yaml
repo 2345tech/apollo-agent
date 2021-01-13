@@ -3,7 +3,7 @@ client: # agent本地配置信息
   allInOne: false     # 拉取的配置数据是否需要合并到一个文件
   ip: 127.0.0.1       # 获取灰度版本的client ip
   logExpire: 72h      # agent本地日志的过期时间，过期自动清理防止日志过多
-  beatFreq: 2s        # agent 心跳频率，该配置值不支持热更新，不配置默认为10m(分钟)
+  beatFreq: 60s        # agent 心跳频率，该配置值不支持热更新，不配置默认为10m(分钟)
 
 server: # Apollo Config Service相关信息
   address: http://your-apollo.config-service.address # 指定环境的Config Service地址
@@ -16,7 +16,7 @@ apps: # Apollo的应用列表
       - application.properties
       - redis.json
       - mysql.yaml
-    pollInterval: 2s  # 如果agent拉取为poll方式，poll的周期值，watch方式，此配置无作用
+    pollInterval: 10s  # 如果agent拉取为poll方式，poll的周期值，watch方式，此配置无作用
     syntax: env       # 仅支持 dotEnv、ini(非严格env和ini，仅key=value对)、php、txt(包含yaml、yml、json、txt)
-    inOneFile: ./.env # 如果agent拉起配置合并到一个文件，即client.allInOne = true，指定了合并后文件的信息（文件名及文件内容格式）
+    inOneFile: ./allInOne.env # 如果agent拉起配置合并到一个文件，即client.allInOne = true，指定了合并后文件的信息（文件名及文件内容格式）
     # 当client.allInOne = false，会为每个namespace生成一个独立的文件（目录位置与inOneFile相同），如上：./application.properties、./redis.json、./mysql.yaml
