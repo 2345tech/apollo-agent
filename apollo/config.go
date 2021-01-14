@@ -15,7 +15,7 @@ import (
 
 const TmpFileSuffix = ".tmp"
 
-type Worker interface {
+type WorkerContract interface {
 	SetMeta(meta *MetaConfig)
 	GetMeta() *MetaConfig
 	GetConfig(wg *sync.WaitGroup, ctx context.Context)
@@ -42,13 +42,13 @@ type ConfigData map[string]map[string]string
 
 type Apollo struct {
 	runMode string
-	Worker  []Worker
+	Worker  []WorkerContract
 	Wg      *sync.WaitGroup
 }
 
 func NewHandler() common.AgentHandler {
 	return &Apollo{
-		Worker: make([]Worker, 0),
+		Worker: make([]WorkerContract, 0),
 		Wg:     new(sync.WaitGroup),
 	}
 }
@@ -84,12 +84,12 @@ func (a *Apollo) AfterCompletion(ctx context.Context) error {
 	for _, worker := range a.Worker {
 		worker.CloseChan()
 	}
-	a.Worker = make([]Worker, 0)
+	a.Worker = make([]WorkerContract, 0)
 	log.Println("[INFO] apollo.Apollo handler stopped")
 	return nil
 }
 
-func (a *Apollo) WriteData(worker Worker, ctx context.Context) {
+func (a *Apollo) WriteData(worker WorkerContract, ctx context.Context) {
 	defer a.Wg.Done()
 	for {
 		meta := worker.GetMeta()
@@ -126,13 +126,8 @@ func (a *Apollo) setWorkers(param *common.HandlerParam) {
 	}
 }
 
-func (a *Apollo) newWorker(param *common.HandlerParam, app *common.App) Worker {
-	switch a.runMode {
-	case common.ModeWatch:
-		return NewWatcher(param.AllInOne, app.PollInterval)
-	default:
-		return NewPoller(param.AllInOne, app.PollInterval)
-	}
+func (a *Apollo) newWorker(param *common.HandlerParam, app *common.App) WorkerContract {
+	return NewDefaultWorker(param.AllInOne, app.PollInterval, a.runMode)
 }
 
 func getApolloClient(address string, ctx context.Context) (*apolloclient.Client, error) {
@@ -149,7 +144,7 @@ func getApolloClient(address string, ctx context.Context) (*apolloclient.Client,
 	return client, nil
 }
 
-func writeConfigInOneFile(meta *MetaConfig, worker Worker) {
+func writeConfigInOneFile(meta *MetaConfig, worker WorkerContract) {
 	tmpFile := meta.FileName + TmpFileSuffix
 	if err := util.MultiNSInOneFile(tmpFile, meta.Syntax, meta.Namespaces, getSyncMapData(worker.GetData()));
 		err != nil {
@@ -165,7 +160,7 @@ func writeConfigInOneFile(meta *MetaConfig, worker Worker) {
 	}
 }
 
-func writeConfigOneByOne(meta *MetaConfig, worker Worker) {
+func writeConfigOneByOne(meta *MetaConfig, worker WorkerContract) {
 	for ns, data := range getSyncMapData(worker.GetData()) {
 		oldFile := filepath.Dir(meta.FileName) + string(os.PathSeparator) + ns
 		tmpFile := oldFile + TmpFileSuffix
