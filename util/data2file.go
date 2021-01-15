@@ -103,7 +103,7 @@ func multiDataToDotENV(multiData map[string]map[string]string, nss []string) str
 			sort.Strings(sortKeys) // 进行key自然升序
 
 			// 写一行注释，提高.env文件可读性，用于快速区分namespace配置区块
-			content = append(content, "###"+namespace+"###")
+			content = append(content, "###"+trimNSSuffix(namespace)+"###")
 
 			for _, key := range sortKeys {
 				content = append(content, fmt.Sprintf(`%s=%s`, key, data[key]))
@@ -128,7 +128,7 @@ func multiDataToINI(multiData map[string]map[string]string, nss []string) string
 			sort.Strings(sortKeys) // 进行key自然升序
 
 			// 根据namespace分配置区块
-			content = append(content, "["+namespace+"]")
+			content = append(content, "["+trimNSSuffix(namespace)+"]")
 
 			for _, key := range sortKeys {
 				content = append(content, fmt.Sprintf(`%s=%s`, key, data[key]))
@@ -145,7 +145,7 @@ func multiDataToPHP(multiData map[string]map[string]string, nss []string) string
 	content := make(map[string]map[string]string)
 	for _, namespace := range nss {
 		if data, ok := multiData[namespace]; ok {
-			content[namespace] = data
+			content[trimNSSuffix(namespace)] = data
 		}
 	}
 
@@ -164,6 +164,16 @@ func multiDataToTXT(multiData map[string]map[string]string, nss []string) string
 	}
 
 	return strings.Join(content, "\n")
+}
+
+// trimNSSuffix 切除namespace后缀
+func trimNSSuffix(namespace string) string {
+	ns := strings.Split(namespace, ".")
+	if len(ns) > 0 {
+		return ns[0]
+	} else {
+		return namespace
+	}
 }
 
 // HashFileMd5 获取文件md5值

@@ -12,8 +12,8 @@ import (
 )
 
 const (
-	VERSION  = "v4.1.0-release"
-	AUTHOR   = "lixy<lixy@2345.com>"
+	VERSION  = "v4.1.3"
+	AUTHOR   = "lixy<lixy@2345.com>; cinvanlee<cinvan.lee@gmail.com>"
 	FilePerm = 0644
 )
 

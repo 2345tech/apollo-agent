@@ -1,5 +1,5 @@
-github.com/2345tech/apolloclient v1.1.0 h1:zN/EOGIzdjjKI+vxXmRzFlpQWl4tI2mwU9/aS0vHBzg=
-github.com/2345tech/apolloclient v1.1.0/go.mod h1:VS1OwMSBTmt4JBxLFYYa4wly1emWM+uN3RSlTiSAO9M=
+github.com/2345tech/apolloclient v1.1.2 h1:ESQP33e/AfOTeRMBIRYpxxaiyyjw883W3gB2hhBVyLo=
+github.com/2345tech/apolloclient v1.1.2/go.mod h1:VS1OwMSBTmt4JBxLFYYa4wly1emWM+uN3RSlTiSAO9M=
 github.com/fsnotify/fsnotify v1.4.9 h1:hsms1Qyu0jgnwNXIxa+/V/PDsU6CfLf6CNO8H7IWoS4=
 github.com/fsnotify/fsnotify v1.4.9/go.mod h1:znqG4EE+3YCdAaPaxE2ZRY/06pZUdp0tY4IgpuI1SZQ=
 golang.org/x/sys v0.0.0-20191005200804-aed5e4c7ecf9 h1:L2auWcuQIvxz9xSEqzESnV/QN/gNRXNApHi3fYwl2w0=

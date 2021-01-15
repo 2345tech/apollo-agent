@@ -34,12 +34,12 @@ func (l *LogLauncher) Init(agent *Agent) error {
 	}
 	log.SetOutput(f)
 	l.Logfile = f
-	l.LogExpire = agent.LogExpire
 	agent.LogFile = f
 	return nil
 }
 
 func (l *LogLauncher) Run() error {
+	l.LogExpire = l.agent.LogExpire
 	if l.agent.EnvProfile {
 		return nil
 	}
@@ -96,14 +96,14 @@ func (l *LogLauncher) logrotate() {
 }
 
 func (l *LogLauncher) emptyTrash(path, trashFile string) {
-	nowTime := time.Now().Unix()
+	nowTime := time.Now().UnixNano()
 	_ = filepath.Walk(path, func(p string, f os.FileInfo, err error) error {
 		if f == nil {
 			return err
 		}
 
 		if strings.Contains(p, path+string(os.PathSeparator)+trashFile+"_") {
-			if float64(nowTime-f.ModTime().Unix()) > l.LogExpire.Seconds() {
+			if nowTime-f.ModTime().UnixNano() > l.LogExpire.Nanoseconds() {
 				_ = os.RemoveAll(p)
 				log.Println("[INFO] remove log file:" + p)
 			}

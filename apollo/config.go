@@ -5,7 +5,6 @@ import (
 	"github.com/2345tech/apollo-agent/common"
 	"github.com/2345tech/apollo-agent/util"
 	"github.com/2345tech/apolloclient"
-	"io"
 	"log"
 	"net/http"
 	"os"
@@ -91,8 +90,8 @@ func (a *Apollo) AfterCompletion(ctx context.Context) error {
 
 func (a *Apollo) WriteData(worker WorkerContract, ctx context.Context) {
 	defer a.Wg.Done()
+	meta := worker.GetMeta()
 	for {
-		meta := worker.GetMeta()
 		select {
 		case <-ctx.Done():
 			log.Printf("[INFO] [appId] %v WriteData down...\n", meta.AppId)
@@ -133,12 +132,11 @@ func (a *Apollo) newWorker(param *common.HandlerParam, app *common.App) WorkerCo
 func getApolloClient(address string, ctx context.Context) (*apolloclient.Client, error) {
 	var err error
 	var client *apolloclient.Client
-	var body io.Reader
 	var request *http.Request
 	if client, err = apolloclient.NewClient(address, http.DefaultClient, nil); err != nil {
 		return nil, err
 	}
-	if request, err = http.NewRequestWithContext(ctx, http.MethodGet, "", body); err == nil {
+	if request, err = http.NewRequestWithContext(ctx, http.MethodGet, "", nil); err == nil {
 		client.Request = request
 	}
 	return client, nil
