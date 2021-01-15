@@ -51,7 +51,7 @@ func SingleNSInOneFile(fileName, suffix string, data map[string]string) error {
 	case F_YAML, F_YML, F_XML, F_TXT:
 		content = data["content"]
 	}
-	return writeFile(fileName, content, FilePerm)
+	return WriteFile(fileName, content, FilePerm)
 }
 
 // MultiNSInOneFile 将多个NS配置数据写入到一个文件中
@@ -67,11 +67,11 @@ func MultiNSInOneFile(fileName, suffix string, nss []string, multiData map[strin
 	case F_YAML, F_YML, F_XML, F_TXT:
 		content = multiDataToTXT(multiData, nss)
 	}
-	return writeFile(fileName, content, FilePerm)
+	return WriteFile(fileName, content, FilePerm)
 }
 
-// writeFile 将内容写入文件
-func writeFile(filename, content string, perm os.FileMode) error {
+// WriteFile 将内容写入文件
+func WriteFile(filename, content string, perm os.FileMode) error {
 	var m sync.Mutex
 	m.Lock()
 	defer m.Unlock()
@@ -201,5 +201,5 @@ func CopyFile(sourceFile, toNewFile string) error {
 		return err
 	}
 
-	return writeFile(toNewFile, string(input), FilePerm)
+	return WriteFile(toNewFile, string(input), FilePerm)
 }

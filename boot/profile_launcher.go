@@ -16,7 +16,7 @@ import (
 const (
 	_defaultClientType      = "poll"
 	_defaultClientAllInOne  = true
-	_defaultClientLogExpire = 1 * 24 * time.Hour
+	_defaultClientLogExpire = 7 * 24 * time.Hour
 	_defaultServerCluster   = "default"
 	_defaultAppNamespace    = "application.properties"
 	_defaultAppPollInterval = 60 * time.Second
