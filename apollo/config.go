@@ -20,7 +20,6 @@ type WorkerContract interface {
 	GetConfig(wg *sync.WaitGroup, ctx context.Context)
 	GetChan() chan struct{}
 	CloseChan()
-	CleanData()
 	GetData() *sync.Map
 	DeleteDataKey(key string)
 	IsAllInOne() bool
@@ -148,7 +147,6 @@ func writeConfigInOneFile(meta *MetaConfig, worker WorkerContract) {
 		err != nil {
 		log.Printf("[WARN] [appId] %v WriteData error : %v \n", meta.AppId, err.Error())
 	} else {
-		worker.CleanData()
 		if covered, err := fileCompareAndCover(tmpFile, meta.FileName); err != nil {
 			log.Printf("[WARNING] copy tmp to config failed. ERR# %s \n", err.Error())
 		} else if covered {

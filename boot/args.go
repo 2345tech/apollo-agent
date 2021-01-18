@@ -157,7 +157,11 @@ func convertOldConfigFileToNew(oldFile, newFile string) bool {
 		Server: &Server{},
 		Apps:   []*App{},
 	}
-	configNew.Client.Type = common.ModePoll
+	if configOld.Type == 1 {
+		configNew.Client.Type = common.ModePoll
+	} else {
+		configNew.Client.Type = common.ModeWatch
+	}
 	if configOld.AllInOne == 1 {
 		configNew.Client.AllInOne = true
 	} else {

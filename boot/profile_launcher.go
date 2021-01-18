@@ -123,7 +123,6 @@ func (p *ProfileLauncher) Parse() error {
 		}
 	}
 	p.Profile.wrapper()
-	p.Profile.Client.Type = _defaultClientType
 	p.ProfileUpdate = false
 	return nil
 }
@@ -167,7 +166,6 @@ func (p *ProfileLauncher) loadConfigFile() error {
 	if err != nil {
 		return fmt.Errorf("[ERROR] Unmarshal config file(default is app.yaml) error, " + err.Error())
 	}
-	p.Profile.Server.Cluster = strings.ToLower(p.Profile.Server.Cluster)
 
 	log.Println("[INFO] load config from " + *p.agent.Args.ConfigFile)
 	return nil

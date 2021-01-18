@@ -85,10 +85,6 @@ func (w *DefaultWorker) GetData() *sync.Map {
 	return w.Data
 }
 
-func (w *DefaultWorker) CleanData() {
-	w.Data = new(sync.Map)
-}
-
 func (w *DefaultWorker) DeleteDataKey(key string) {
 	w.Data.Delete(key)
 }
