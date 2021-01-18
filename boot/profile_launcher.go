@@ -19,7 +19,7 @@ const (
 	_defaultClientLogExpire = 7 * 24 * time.Hour
 	_defaultServerCluster   = "default"
 	_defaultAppNamespace    = "application.properties"
-	_defaultAppPollInterval = 60 * time.Second
+	_defaultAppPollInterval = 20 * time.Second
 	_defaultAppSyntax       = util.F_ENV
 )
 
@@ -123,6 +123,7 @@ func (p *ProfileLauncher) Parse() error {
 		}
 	}
 	p.Profile.wrapper()
+	p.Profile.Client.Type = _defaultClientType
 	p.ProfileUpdate = false
 	return nil
 }
