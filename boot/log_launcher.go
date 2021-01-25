@@ -41,7 +41,7 @@ func (l *LogLauncher) Init(agent *Agent) error {
 func (l *LogLauncher) Run() error {
 	l.LogExpire = l.agent.LogExpire
 	if l.agent.EnvProfile {
-		return nil
+		l.booted = true
 	}
 	if l.booted {
 		return nil
@@ -72,6 +72,7 @@ func (l *LogLauncher) logrotate() {
 			return
 
 		case <-time.After(600 * time.Second): // 10分钟check一次，模拟一个简单的cron
+			log.Println("[INFO] LogLauncher.splitLog do logrotate")
 			now := time.Now()
 			if lastSplitDay == now.Day() {
 				continue
@@ -96,14 +97,13 @@ func (l *LogLauncher) logrotate() {
 }
 
 func (l *LogLauncher) emptyTrash(path, trashFile string) {
-	nowTime := time.Now().UnixNano()
 	_ = filepath.Walk(path, func(p string, f os.FileInfo, err error) error {
 		if f == nil {
 			return err
 		}
 
 		if strings.Contains(p, path+string(os.PathSeparator)+trashFile+"_") {
-			if nowTime-f.ModTime().UnixNano() > l.LogExpire.Nanoseconds() {
+			if float64(time.Now().Unix()-f.ModTime().Unix()) > l.LogExpire.Seconds() {
 				_ = os.RemoveAll(p)
 				log.Println("[INFO] remove log file:" + p)
 			}
