@@ -72,11 +72,11 @@ func (l *LogLauncher) logrotate() {
 			return
 
 		case <-time.After(600 * time.Second): // 10分钟check一次，模拟一个简单的cron
-			log.Println("[INFO] LogLauncher.splitLog do logrotate")
 			now := time.Now()
 			if lastSplitDay == now.Day() {
 				continue
 			}
+			log.Println("[INFO] LogLauncher.splitLog do logrotate")
 			lastSplitDay = now.Day()
 
 			logFileName := l.agent.Args.LogFile

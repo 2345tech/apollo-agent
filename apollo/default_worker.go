@@ -150,7 +150,7 @@ func (w *DefaultWorker) watching(param apolloclient.GetConfigParam, wg *sync.Wai
 						log.Println("[INFO] GetConfig from Apollo Config Service error:" + err.Error())
 					}
 				} else {
-					log.Printf("[ERROR] [appId] %v [Namespace] %v GetNotifications failed...\n", param.AppID, param.Namespace)
+					log.Printf("[WARNING] [appId] %v [Namespace] %v GetNotifications failed...\n", param.AppID, param.Namespace)
 					time.Sleep(w.interval)
 				}
 			}
